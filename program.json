@@ -5,25 +5,25 @@
   "license": "MIT",
   "dependencies": [
     {
-      "name": "board.aleo",
-      "location": "local",
-      "network": null,
-      "path": "board"
-    },
-    {
-      "name": "move.aleo",
-      "location": "local",
-      "network": null,
-      "path": "move"
+      "name": "visibility.aleo",
+      "location": "network",
+      "network": "testnet",
+      "path": null
     },
     {
       "name": "verify.aleo",
-      "location": "local",
-      "network": null,
-      "path": "verify"
+      "location": "network",
+      "network": "testnet",
+      "path": null
     },
     {
-      "name": "visibility.aleo",
+      "name": "move.aleo",
+      "location": "network",
+      "network": "testnet",
+      "path": null
+    },
+    {
+      "name": "board.aleo",
       "location": "network",
       "network": "testnet",
       "path": null

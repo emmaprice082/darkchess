@@ -1,4 +1,20 @@
 <!-- # TODO: FIX ENTIRE FILE FOR FOG OF WAR CHESS -->
+# Deploying locally
+1. amareleo-chain start
+2. In your Leo directory, update your .env as follows:
+      NETWORK=testnet
+      PRIVATE_KEY=APrivateKey1zkp...GPWH
+      ENDPOINT=http://localhost:3030
+    For the Private Key, use a Private Key that ends in GPWH (which is automatically generated when you create a new Leo project using leo new PROJECT_NAME)
+
+3.  Run `leo deploy` from the root of your Leo project directory will deploy the program to your local devnet.
+
+4.  When you are ready to shutdown your devnet, press CTRL + C 
+
+Note: Having the snarkos CLI would still be useful if you want to use tools like record scanning.
+
+
+
 
 # Running locally
 
