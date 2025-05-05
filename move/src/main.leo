@@ -17,20 +17,19 @@ program move.aleo {
         prev_hit_or_miss: u64,
         piece_type: u8,
     ) -> Move {
-        let opponent: address = if move_record.owner == move_record.player_1 {
-            move_record.player_2
-        } else {
-            move_record.player_1
-        };
+        let opponent: address = move_record.player_1;
+        if move_record.owner == move_record.player_1 {
+            opponent = move_record.player_2;
+        }
 
         return Move {
-            owner: opponent,  // The owner switches after each move
-            from_coordinate,  // The starting coordinate
-            to_coordinate,    // The destination coordinate
+            owner: opponent,
+            from_coordinate,
+            to_coordinate,
             player_1: move_record.player_1,
             player_2: move_record.player_2,
             prev_hit_or_miss,
-            piece_type,       // The piece being moved
+            piece_type,
         };
     }
 

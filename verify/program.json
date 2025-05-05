@@ -1,6 +1,14 @@
 {
-    "program": "verify.aleo",
-    "version": "0.0.0",
-    "description": "",
-    "license": "MIT"
+  "program": "verify.aleo",
+  "version": "0.0.0",
+  "description": "",
+  "license": "MIT",
+  "dependencies": [
+    {
+      "name": "visibility.aleo",
+      "location": "local",
+      "network": null,
+      "path": "../visibility/src"
+    }
+  ]
 }

@@ -1,3 +1,5 @@
+import move.aleo;
+
 // chessboard/main.leo
 program board.aleo {
     record ChessBoardState {
@@ -33,7 +35,10 @@ program board.aleo {
         board: ChessBoardState,
         mv: move.aleo/Move,
     ) -> ChessBoardState {
-        let updated_known: u64 = board.known_enemy_locations | mv.incoming_fire_coordinate;
+        let updated_known: u64 = board.known_enemy_locations
+            | mv.from_coordinate
+            | mv.to_coordinate;
+
 
         return ChessBoardState {
             owner: board.owner,
