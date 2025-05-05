@@ -4,4 +4,5 @@
 *.verifier
 outputs/
 leo_venv/
-*TODO*
+*TODO**
+.DS_Store
