@@ -5,4 +5,5 @@
 outputs/
 leo_venv/
 *TODO**
+*old*
 .DS_Store
