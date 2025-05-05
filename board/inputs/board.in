@@ -1,0 +1,7 @@
+// The program input for chessboard/src/main.leo
+[main]
+a: u64 = 0x021043C081042081u64
+b: u64 = 0x0020103040C02000u64
+// TODO:
+opponent_address: address = aleo1xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+

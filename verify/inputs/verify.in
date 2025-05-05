@@ -1,0 +1,9 @@
+// The program input for verify/src/main.leo
+[main]
+public player_1_visibility: u64 = 0xFFFF000000000000u64;  // Visibility mask for Player 1
+public player_2_visibility: u64 = 0x0000FFFF00000000u64;  // Visibility mask for Player 2
+public player_1_pieces: u64 = 0x000000000000FF00u64;  // Bitstring representing Player 1's pieces (e.g., pawns, rooks, knights)
+public player_2_pieces: u64 = 0x000000FF00000000u64;  // Bitstring representing Player 2's pieces
+
+// TODO: Optional: Additional configurations (board size, etc.)
+board_size: u32 = 8u32;  // Standard 8x8 chessboard

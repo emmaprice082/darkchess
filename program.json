@@ -1,0 +1,32 @@
+{
+  "program": "darkchess.aleo",
+  "version": "0.1.0",
+  "description": "",
+  "license": "MIT",
+  "dependencies": [
+    {
+      "name": "board.aleo",
+      "location": "local",
+      "network": null,
+      "path": "board"
+    },
+    {
+      "name": "move.aleo",
+      "location": "local",
+      "network": null,
+      "path": "move"
+    },
+    {
+      "name": "verify.aleo",
+      "location": "local",
+      "network": null,
+      "path": "verify"
+    },
+    {
+      "name": "visibility.aleo",
+      "location": "network",
+      "network": "testnet",
+      "path": null
+    }
+  ]
+}
