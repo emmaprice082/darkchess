@@ -56,111 +56,32 @@ program verify.aleo {
 
     function knight_vision(square: u8) -> u64 {
         let mask: u64 = 0u64;
+
         let rank: i8 = (square / 8u8) as i8;
         let file: i8 = (square % 8u8) as i8;
 
-        // Manually unrolling deltas
-        let dr1: i8 = -2; let df1: i8 = -1;
-        let dr2: i8 = -2; let df2: i8 = 1;
-        let dr3: i8 = -1; let df3: i8 = -2;
-        let dr4: i8 = -1; let df4: i8 = 2;
-        let dr5: i8 = 1; let df5: i8 = -2;
-        let dr6: i8 = 1; let df6: i8 = 2;
-        let dr7: i8 = 2; let df7: i8 = -1;
-        let dr8: i8 = 2; let df8: i8 = 1;
+        // Use subtraction to simulate negative values
+        let dr: [i8; 8] = [0i8 - 2i8, 0i8 - 2i8, 0i8 - 1i8, 0i8 - 1i8, 1i8, 1i8, 2i8, 2i8];
+        let df: [i8; 8] = [0i8 - 1i8, 1i8, 0i8 - 2i8, 2i8, 0i8 - 2i8, 2i8, 0i8 - 1i8, 1i8];
 
-        // Checking each of the 8 knight moves
-        let r1 = rank + dr1;
-        let f1 = file + df1;
-        if r1 >= 0 && r1 < 8 && f1 >= 0 && f1 < 8 {
-            let target = (r1 * 8 + f1) as u8;
-            mask = mask | (1u64 << target);
+        for i: u8 in 0u8..8u8 {
+            let index: u32 = i as u32;
+            let new_rank: i8 = rank + dr[index];
+            let new_file: i8 = file + df[index];
+
+            if new_rank >= 0i8 && new_rank < 8i8 && new_file >= 0i8 && new_file < 8i8 {
+                let target: u8 = (new_rank * 8i8 + new_file) as u8;
+                mask = mask | (1u64 << target);
+            }
         }
-
-        let r2 = rank + dr2;
-        let f2 = file + df2;
-        if r2 >= 0 && r2 < 8 && f2 >= 0 && f2 < 8 {
-            let target = (r2 * 8 + f2) as u8;
-            mask = mask | (1u64 << target);
-        }
-
-        let r3 = rank + dr3;
-        let f3 = file + df3;
-        if r3 >= 0 && r3 < 8 && f3 >= 0 && f3 < 8 {
-            let target = (r3 * 8 + f3) as u8;
-            mask = mask | (1u64 << target);
-        }
-
-        let r4 = rank + dr4;
-        let f4 = file + df4;
-        if r4 >= 0 && r4 < 8 && f4 >= 0 && f4 < 8 {
-            let target = (r4 * 8 + f4) as u8;
-            mask = mask | (1u64 << target);
-        }
-
-        let r5 = rank + dr5;
-        let f5 = file + df5;
-        if r5 >= 0 && r5 < 8 && f5 >= 0 && f5 < 8 {
-            let target = (r5 * 8 + f5) as u8;
-            mask = mask | (1u64 << target);
-        }
-
-        let r6 = rank + dr6;
-        let f6 = file + df6;
-        if r6 >= 0 && r6 < 8 && f6 >= 0 && f6 < 8 {
-            let target = (r6 * 8 + f6) as u8;
-            mask = mask | (1u64 << target);
-        }
-
-        let r7 = rank + dr7;
-        let f7 = file + df7;
-        if r7 >= 0 && r7 < 8 && f7 >= 0 && f7 < 8 {
-            let target = (r7 * 8 + f7) as u8;
-            mask = mask | (1u64 << target);
-        }
-
-        let r8 = rank + dr8;
-        let f8 = file + df8;
-        if r8 >= 0 && r8 < 8 && f8 >= 0 && f8 < 8 {
-            let target = (r8 * 8 + f8) as u8;
-            mask = mask | (1u64 << target);
-        }
-
-        return mask;
-    }
-
-    function king_vision(square: u8) -> u64 {
-        let mask: u64 = 0u64;
-        let rank: i8 = (square / 8u8) as i8;
-        let file: i8 = (square % 8u8) as i8;
-
-        // Define possible surrounding squares for the King
-        let dr1: i8 = -1; let df1: i8 = -1;
-        let dr2: i8 = -1; let df2: i8 = 0;
-        let dr3: i8 = -1; let df3: i8 = 1;
-        let dr4: i8 = 0;  let df4: i8 = -1;
-        let dr5: i8 = 0;  let df5: i8 = 1;
-        let dr6: i8 = 1;  let df6: i8 = -1;
-        let dr7: i8 = 1;  let df7: i8 = 0;
-        let dr8: i8 = 1;  let df8: i8 = 1;
-
-        // Check each of the 8 surrounding squares and update visibility mask
-        mask = mask | check_square(rank + dr1, file + df1);
-        mask = mask | check_square(rank + dr2, file + df2);
-        mask = mask | check_square(rank + dr3, file + df3);
-        mask = mask | check_square(rank + dr4, file + df4);
-        mask = mask | check_square(rank + dr5, file + df5);
-        mask = mask | check_square(rank + dr6, file + df6);
-        mask = mask | check_square(rank + dr7, file + df7);
-        mask = mask | check_square(rank + dr8, file + df8);
 
         return mask;
     }
 
     // Helper function to check whether the square is on the board and return its bitmask
     function check_square(rank: i8, file: i8) -> u64 {
-        if rank >= 0 && rank < 8 && file >= 0 && file < 8 {
-            let target = (rank * 8 + file) as u8;
+        if rank >= 0i8 && rank < 8i8 && file >= 0i8 && file < 8i8 {
+            let target: u8 = (rank * 8i8 + file) as u8;
             return 1u64 << target;
         }
         return 0u64;
@@ -172,10 +93,17 @@ program verify.aleo {
         let file: i8 = (square % 8u8) as i8;
 
         // Define the directions for NE, NW, SE, SW as individual variables
-        let dr1: i8 = 1; let df1: i8 = 1;    // NE
-        let dr2: i8 = 1; let df2: i8 = -1;   // NW
-        let dr3: i8 = -1; let df3: i8 = 1;   // SE
-        let dr4: i8 = -1; let df4: i8 = -1;  // SW
+        let dr1: i8 = 1i8;
+        let df1: i8 = 1i8;    // NE
+
+        let dr2: i8 = 1i8;
+        let df2: i8 = -1i8;   // NW
+
+        let dr3: i8 = -1i8;
+        let df3: i8 = 1i8;    // SE
+
+        let dr4: i8 = -1i8;
+        let df4: i8 = -1i8;   // SW
 
         // Check each direction (NE, NW, SE, SW)
         mask = mask | check_direction(rank, file, dr1, df1);
@@ -189,13 +117,15 @@ program verify.aleo {
     // Helper function to check visibility in a given direction
     function check_direction(rank: i8, file: i8, dr: i8, df: i8) -> u64 {
         let mask: u64 = 0u64;
-        let mut r: i8 = rank + dr;
-        let mut f: i8 = file + df;
+        let r: i8 = rank + dr;
+        let f: i8 = file + df;
 
         // Traverse in the direction and accumulate the visibility mask
-        while r >= 0 && r < 8 && f >= 0 && f < 8 {
-            let target = (r * 8 + f) as u8;
-            mask = mask | (1u64 << target);
+        for i in 0u8..8u8 {  // Use 'i' as the loop variable
+            if r >= 0i8 && r < 8i8 && f >= 0i8 && f < 8i8 {
+                let target: u8 = (r * 8i8 + f) as u8;
+                mask = mask | (1u64 << target);
+            }
 
             // Move to the next square in the direction
             r = r + dr;
@@ -205,29 +135,28 @@ program verify.aleo {
         return mask;
     }
 
+
     function straight_vision(square: u8) -> u64 {
         let mask: u64 = 0u64;
         let rank: i8 = (square / 8u8) as i8;
         let file: i8 = (square % 8u8) as i8;
 
-        // N, S, E, W directions
-        let directions = [
-            (1, 0),  // South
-            (-1, 0), // North
-            (0, 1),  // East
-            (0, -1), // West
-        ];
+        let drs: [i8; 4] = [1i8, -1i8, 0i8, 0i8];   // S, N, E, W
+        let dfs: [i8; 4] = [0i8, 0i8, 1i8, -1i8];   // S, N, E, W
 
-        // Check each direction
-        for direction in directions {
-            let (dr, df) = direction;
-            let mut r = rank + dr;
-            let mut f = file + df;
-            while r >= 0 && r < 8 && f >= 0 && f < 8 {
-                let target = (r * 8 + f) as u8;
-                mask = mask | (1u64 << target);
-                r = r + dr;
-                f = f + df;
+        for i in 0u8..4u8 {
+            let r: i8 = rank + drs[i as usize];
+            let f: i8 = file + dfs[i as usize];
+
+            // Define a range to iterate over the number of steps we can take in the direction
+            for j in 0u8..8u8 {  // Maximum 8 squares in any direction
+                if r >= 0i8 && r < 8i8 && f >= 0i8 && f < 8i8 {
+                    let target: u8 = (r * 8i8 + f) as u8;
+                    mask = mask | (1u64 << target);
+                }
+
+                r = r + drs[i as usize];
+                f = f + dfs[i as usize];
             }
         }
 
