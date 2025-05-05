@@ -1,7 +1,6 @@
 import board.aleo;
 import move.aleo;
 import verify.aleo;
-import visibility.aleo;
 
 program darkchess.aleo {
 
