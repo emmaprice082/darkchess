@@ -56,7 +56,7 @@ program verify.aleo {
     }
 
     // Helper function to check visibility in a given direction
-    function check_direction(rank: i8, file: i8, dr: i8, df: i8) -> u64 {
+    inline function check_direction(rank: i8, file: i8, dr: i8, df: i8) -> u64 {
         let mask: u64 = 0u64;
         let r: i8 = rank + dr;
         let f: i8 = file + df;
