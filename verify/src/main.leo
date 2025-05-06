@@ -1,58 +1,5 @@
 // verify/main.leo
 program verify.aleo {
-    function get_visible_squares(
-        owner: address,
-        player: address,
-        own_pieces_0: u64,
-        i: u8,  // Taking i as a parameter
-    ) -> u64 {
-        let visibility: u64 = 0u64;  // Initialize visibility without mut
-        if (owner != player) {
-            return 0u64;
-        }
-
-        // Explicitly casting the number 8 to u8
-        let byte: u8 = ((own_pieces_0 >> (i * 8u8)) & 0xFFu64) as u8;  // Ensure casting correctly
-        if byte == 0u8 {
-            return visibility;
-        }
-
-        // Explicitly casting 5 as u8 to avoid implicit type issues
-        let piece_type: u8 = (byte >> 5u8) & 0x07u8;  // bits 7–5
-        let square: u8 = byte & 0x1Fu8;  // bits 4–0
-
-        let square_mask: u64 = 1u64 << square;
-
-        // Always see the square you're on
-        visibility = visibility | square_mask;
-
-        // Handle piece types with match statement
-        // Assuming piece_type is a variable of type u8
-        if piece_type == 1u8 {  // Pawn: sees forward (simplified to +8)
-            if square < 56u8 {
-                visibility = visibility | (1u64 << (square + 8u8));  // Explicitly using 8u8
-            }
-        } else if piece_type == 2u8 {  // Knight visibility
-            visibility = visibility | knight_vision(square);
-        } else if piece_type == 3u8 {  // Bishop
-            visibility = visibility | diagonal_vision(square);
-        } else if piece_type == 4u8 {  // Rook
-            visibility = visibility | straight_vision(square);
-        } else if piece_type == 5u8 {  // Queen
-            visibility = visibility | straight_vision(square) | diagonal_vision(square);
-        } else if piece_type == 6u8 {  // King
-            visibility = visibility | king_vision(square);
-        } else {  // Default case, should handle all other cases
-            // No action is needed, you can leave it empty or put logic here
-        }
-
-        // Check if we have processed all 8 pieces, and if not, recurse to the next index
-        if i < 7u8 {
-            visibility = visibility | get_visible_squares(owner, player, own_pieces_0, i + 1u8);
-        }
-
-        return visibility;
-    }
 
     function knight_vision(square: u8) -> u64 {
         let mask: u64 = 0u64;
@@ -121,7 +68,7 @@ program verify.aleo {
         let f: i8 = file + df;
 
         // Traverse in the direction and accumulate the visibility mask
-        for i in 0u8..8u8 {  // Use 'i' as the loop variable
+        for i: u8 in 0u8..8u8 {  // Correct loop declaration with 'i: u8'
             if r >= 0i8 && r < 8i8 && f >= 0i8 && f < 8i8 {
                 let target: u8 = (r * 8i8 + f) as u8;
                 mask = mask | (1u64 << target);
@@ -135,7 +82,6 @@ program verify.aleo {
         return mask;
     }
 
-
     function straight_vision(square: u8) -> u64 {
         let mask: u64 = 0u64;
         let rank: i8 = (square / 8u8) as i8;
@@ -144,19 +90,19 @@ program verify.aleo {
         let drs: [i8; 4] = [1i8, -1i8, 0i8, 0i8];   // S, N, E, W
         let dfs: [i8; 4] = [0i8, 0i8, 1i8, -1i8];   // S, N, E, W
 
-        for i in 0u8..4u8 {
-            let r: i8 = rank + drs[i as usize];
-            let f: i8 = file + dfs[i as usize];
+        for i: u8 in 0u8..4u8 {  // Loop over the 4 directions (S, N, E, W)
+            let r: i8 = rank + drs[i];
+            let f: i8 = file + dfs[i];
 
             // Define a range to iterate over the number of steps we can take in the direction
-            for j in 0u8..8u8 {  // Maximum 8 squares in any direction
+            for j: u8 in 0u8..8u8 {  // Maximum 8 squares in any direction
                 if r >= 0i8 && r < 8i8 && f >= 0i8 && f < 8i8 {
                     let target: u8 = (r * 8i8 + f) as u8;
                     mask = mask | (1u64 << target);
                 }
 
-                r = r + drs[i as usize];
-                f = f + dfs[i as usize];
+                r = r + drs[i];
+                f = f + dfs[i];
             }
         }
 
@@ -173,84 +119,16 @@ program verify.aleo {
         player: address,
     ) -> u64 {
         let is_white: bool = player == board.player_1;
+        let visibility: u64 = 0u64;
 
-        let visible: u64 = 0u64;
-        let result: u64 = visible;
+        // Iterate over all 64 squares
+        for i: u8 in 0u8..64u8 {
+            visibility = apply_visibility(visibility, board, is_white, i);
+        }
 
-        // Manually unrolling the loop for all 64 squares (i from 0 to 63)
-        result = get_visible_squares(board.owner, player, board.own_pieces_0, 0u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 1u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 2u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 3u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 4u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 5u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 6u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 7u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 8u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 9u8);
-
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 10u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 11u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 12u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 13u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 14u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 15u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 16u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 17u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 18u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 19u8);
-
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 20u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 21u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 22u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 23u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 24u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 25u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 26u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 27u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 28u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 29u8);
-
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 30u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 31u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 32u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 33u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 34u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 35u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 36u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 37u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 38u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 39u8);
-
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 40u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 41u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 42u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 43u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 44u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 45u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 46u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 47u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 48u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 49u8);
-
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 50u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 51u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 52u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 53u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 54u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 55u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 56u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 57u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 58u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 59u8);
-
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 60u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 61u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 62u8);
-        result = result | get_visible_squares(board.owner, player, board.own_pieces_0, 63u8);
-
-        return result;
+        return visibility;
     }
+
 
     function apply_visibility(
         current: u64,
@@ -302,14 +180,19 @@ program verify.aleo {
         return current; // Return unchanged if no piece is present
     }
 
-    function valid_move(
+    transition valid_move(
         board: board.aleo/ChessBoardState,
         mv: move.aleo/Move,
     ) -> bool {
         let visible: u64 = apply_fog_of_war(board, mv.owner);
 
-        return (visible & mv.incoming_fire_coordinate) != 0u64;
+        // Compute bitmask for the from_coordinate (source square)
+        let from_mask: u64 = 1u64 << mv.from_coordinate;
+
+        // The move is valid if the source square is visible
+        return (visible & from_mask) != 0u64;
     }
+
 
     // TODO: might need to figure out how to set white_king_position & black_king_position
     function check_game_over(board: board.aleo/ChessBoardState) -> bool {

@@ -6,7 +6,7 @@ program move.aleo {
         to_coordinate: u64,           // Destination of the move
         player_1: address,            // Player 1 address
         player_2: address,            // Player 2 address
-        prev_hit_or_miss: u64,        // Track whether the previous move was a hit or miss
+        prev_hit_or_miss: u64,        // TODO: Track whether the previous move was a hit or miss
         piece_type: u8,               // Type of piece being moved (e.g., king, queen, rook, etc.)
     }
 
@@ -14,9 +14,10 @@ program move.aleo {
         move_record: Move, 
         from_coordinate: u64, 
         to_coordinate: u64,
-        prev_hit_or_miss: u64,
+        prev_hit_or_miss: u64, // TODO
         piece_type: u8,
     ) -> Move {
+        // TODO: does this set to player 2? 
         let opponent: address = move_record.player_1;
         if move_record.owner == move_record.player_1 {
             opponent = move_record.player_2;
