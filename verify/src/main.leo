@@ -27,6 +27,30 @@ program verify.aleo {
         return mask;
     }
 
+    // Helper function to check visibility in a given direction
+    inline check_direction(rank: i8, file: i8, dr: i8, df: i8) -> u64 {
+        let mask: u64 = 0u64;
+        let r: i8 = rank + dr;
+        let f: i8 = file + df;
+
+        // Traverse in the direction and accumulate the visibility mask
+        for i: u8 in 0u8..8u8 {  // Correct loop declaration with 'i: u8'
+            if r >= 0i8 && r < 8i8 && f >= 0i8 && f < 8i8 {
+                let target: u8 = (r * 8i8 + f) as u8;
+                let target_mask: u64 = 1u64 << target;  // Create a mask for the target square
+                
+                // Instead of using bitwise OR, accumulate the mask using addition
+                mask = mask + target_mask;
+            }
+
+            // Move to the next square in the direction
+            r = r + dr;
+            f = f + df;
+        }
+
+        return mask;
+    }
+
     function diagonal_vision(square: u8) -> u64 {
         let mask: u64 = 0u64;
         let rank: i8 = (square / 8u8) as i8;
@@ -50,30 +74,6 @@ program verify.aleo {
 
         if direction_mask != 0u64 {
             mask = mask + direction_mask;  // Adding the mask from this direction
-        }
-
-        return mask;
-    }
-
-    // Helper function to check visibility in a given direction
-    inline function check_direction(rank: i8, file: i8, dr: i8, df: i8) -> u64 {
-        let mask: u64 = 0u64;
-        let r: i8 = rank + dr;
-        let f: i8 = file + df;
-
-        // Traverse in the direction and accumulate the visibility mask
-        for i: u8 in 0u8..8u8 {  // Correct loop declaration with 'i: u8'
-            if r >= 0i8 && r < 8i8 && f >= 0i8 && f < 8i8 {
-                let target: u8 = (r * 8i8 + f) as u8;
-                let target_mask: u64 = 1u64 << target;  // Create a mask for the target square
-                
-                // Instead of using bitwise OR, accumulate the mask using addition
-                mask = mask + target_mask;
-            }
-
-            // Move to the next square in the direction
-            r = r + dr;
-            f = f + df;
         }
 
         return mask;
